@@ -51,9 +51,10 @@ public class ShareKafkaApplicationTests {
 	
 	@Test
 	public void testUpdateEmp() {
-		Emp emp = empService.findById(255698951829716992L);
-		
-		assertEquals(Long.valueOf(255698951829716992L), emp.getEid());
+		Emp emp = empService.findById(255716899122315264L);
+		emp.setSar(2334234.324f);
+		empService.saveOrUpdate(emp);
+		assertEquals(true, 2334234.324f == emp.getSar());
 		
 	}
 	

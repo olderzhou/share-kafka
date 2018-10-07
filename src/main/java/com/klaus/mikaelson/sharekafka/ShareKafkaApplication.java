@@ -15,10 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootApplication
 @EnableSwagger2Doc
 @EnableKafka
-@Slf4j
 @EnableScheduling
 @EnableJpaAuditing
 @EnableJpaRepositories("com.klaus.mikaelson.sharekafka.dao")
+@Slf4j
 public class ShareKafkaApplication {
 	
 	public static void main(String[] args) {
