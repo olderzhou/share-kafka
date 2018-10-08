@@ -24,6 +24,6 @@ public class KafkaSender {
         Emp message = new Emp();
         message.setEname("klaus elena damon");
         log.info("+++++++++++++++++++++  message = {}", gson.toJson(message));
-        kafkaTemplate.send("zhisheng", "klaus", gson.toJson(message));
+        kafkaTemplate.send("zhisheng", "1", gson.toJson(message));
     }
 }
