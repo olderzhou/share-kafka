@@ -31,6 +31,8 @@ spring:
   # 指定kafka 代理地址，可以多个
   kafka:
     bootstrap-servers: 192.168.0.3:9092
+    listener:
+      ack-mode: MANUAL
     producer:
       retries: 0
       # 每次批量发送消息的数量
@@ -38,17 +40,25 @@ spring:
       buffer-memory: 33554432
       # 指定消息key和消息体的编解码方式
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      #value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
     # 指定默认消费者group id
     consumer:
       group-id: test-consumer-group
       auto-offset-reset: earliest
-      enable-auto-commit: true
-      auto-commit-interval: 100
+      enable-auto-commit: false
+      auto-commit-interval: 30000
+      max-poll-records: 2
       # 指定消息key和消息体的编解码方式
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: com.klaus.mikaelson.sharekafka.model      
 #  datasource:
 #    url: jdbc:mysql://localhost:3306/test?characterEncoding=utf-8&useSSL=false
 #    username: root

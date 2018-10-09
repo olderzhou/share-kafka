@@ -28,3 +28,49 @@ services:
     depends_on:
       - zoo1
     container_name: kafka
+    
+    
+    
+    
+    
+    
+#可能遇到的问题
+
+1. 消息格式为对象的时候，需要设置
+spring:
+  kafka:
+    consumer:
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: com.klaus.mikaelson.sharekafka.model
+否则将无法识别对象类型，从而序列化失败
+
+
+2.No Acknowledgment available as an argument, the listener container must have a MANUAL Ackmode to populate the Acknowledgment
+
+Acknowledgment只有在spring.kafka.consumer.enable-auto-commit=false的情况下才会生效，此时需要设置ackMode类型为MANUAL  或 MANUAL_IMMEDIATE 
+添加配置如下：
+spring:
+  kafka:
+    listener:
+      ack-mode: MANUAL  #or  MANUAL_IMMEDIATE
+      
+当需要使用批量处理的 时候，则batchFactory也必须配置ackMode
+
+	@Bean
+	public KafkaListenerContainerFactory<?> batchFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerFactory);
+		factory.setBatchListener(true);
+		factory.getContainerProperties().setAckMode(AckMode.MANUAL);
+		return factory;
+	}
+
+
+
+
+
+
+

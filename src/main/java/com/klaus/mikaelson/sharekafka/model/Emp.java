@@ -17,12 +17,15 @@ import javax.persistence.Version;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import lombok.ToString;
+
 @Entity
 @Table(name = "t_emp", uniqueConstraints=@UniqueConstraint(columnNames={"ename", "sar"},name="unique_ename_sar"),
 	indexes = { 
 		@Index(name = "idx_ename", columnList = "ename", unique = false) ,
 		@Index(name = "idx_ename_did", columnList = "ename,did", unique = false) 
 		})
+@ToString
 public class Emp implements Serializable {
 
 	private static final long serialVersionUID = 1L;

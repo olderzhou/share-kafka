@@ -17,15 +17,17 @@ import lombok.extern.slf4j.Slf4j;
 public class KafkaSender {
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, Object> kafkaTemplate;
+//    @Autowired
+//    private KafkaTemplate<String, String> kafkaTemplate;
 
     private Gson gson = new GsonBuilder().create();
 
     //发送消息方法
     public void send(String topic, Emp message) {
         message.setEname("klaus elena damon");
-        log.info("+++++++++++++++++++++  message = {}", gson.toJson(message));
-        kafkaTemplate.send(topic, gson.toJson(message));
+//        log.info("+++++++++++++++++++++  message = {}", gson.toJson(message));
+        kafkaTemplate.send(topic, String.valueOf(message.getEid()), message);
     }
     
     
@@ -33,7 +35,7 @@ public class KafkaSender {
      * 向topic中发送消息
      */
     public void send (String topic, List<Emp> msgs) {
-        msgs.forEach(msg -> kafkaTemplate.send(topic, gson.toJson(msg)));
+        msgs.forEach(msg -> kafkaTemplate.send(topic, msg));
     }
 
 }
