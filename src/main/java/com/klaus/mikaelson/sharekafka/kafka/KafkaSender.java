@@ -1,5 +1,7 @@
 package com.klaus.mikaelson.sharekafka.kafka;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -20,10 +22,18 @@ public class KafkaSender {
     private Gson gson = new GsonBuilder().create();
 
     //发送消息方法
-    public void send() {
-        Emp message = new Emp();
+    public void send(String topic, Emp message) {
         message.setEname("klaus elena damon");
         log.info("+++++++++++++++++++++  message = {}", gson.toJson(message));
-        kafkaTemplate.send("zhisheng", "klaus", gson.toJson(message));
+        kafkaTemplate.send(topic, gson.toJson(message));
     }
+    
+    
+    /**
+     * 向topic中发送消息
+     */
+    public void send (String topic, List<Emp> msgs) {
+        msgs.forEach(msg -> kafkaTemplate.send(topic, gson.toJson(msg)));
+    }
+
 }
