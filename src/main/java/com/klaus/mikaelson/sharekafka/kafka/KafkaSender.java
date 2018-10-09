@@ -12,11 +12,11 @@ import com.klaus.mikaelson.sharekafka.model.Emp;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+//@Component
 @Slf4j
 public class KafkaSender {
 
-    @Autowired
+//    @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
     private Gson gson = new GsonBuilder().create();

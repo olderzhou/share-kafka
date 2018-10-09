@@ -21,41 +21,41 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 
 import com.google.common.collect.Maps;
 
-@EnableKafka
-@Configuration
+//@EnableKafka
+//@Configuration
 public class KafkaConfig {
 
-	@Value("${spring.kafka.bootstrap-servers}")
+//	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapServers;
 
-	@Value("${spring.kafka.consumer.enable-auto-commit}")
+//	@Value("${spring.kafka.consumer.enable-auto-commit}")
 	private Boolean autoCommit;
 
-	@Value("${spring.kafka.consumer.auto-commit-interval}")
+//	@Value("${spring.kafka.consumer.auto-commit-interval}")
 	private Integer autoCommitInterval;
 
-	@Value("${spring.kafka.consumer.group-id}")
+//	@Value("${spring.kafka.consumer.group-id}")
 	private String groupId;
 
-	@Value("${spring.kafka.consumer.max-poll-records}")
+//	@Value("${spring.kafka.consumer.max-poll-records}")
 	private Integer maxPollRecords;
 
-	@Value("${spring.kafka.consumer.auto-offset-reset}")
+//	@Value("${spring.kafka.consumer.auto-offset-reset}")
 	private String autoOffsetReset;
 
-	@Value("${spring.kafka.producer.retries}")
+//	@Value("${spring.kafka.producer.retries}")
 	private Integer retries;
 
-	@Value("${spring.kafka.producer.batch-size}")
+//	@Value("${spring.kafka.producer.batch-size}")
 	private Integer batchSize;
 
-	@Value("${spring.kafka.producer.buffer-memory}")
+//	@Value("${spring.kafka.producer.buffer-memory}")
 	private Integer bufferMemory;
 
 	  /**
      *  生产者配置信息
      */
-    @Bean
+//    @Bean
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props = Maps.newHashMap();
         props.put(ProducerConfig.ACKS_CONFIG, "0");
@@ -72,7 +72,7 @@ public class KafkaConfig {
     /**
      *  生产者工厂
      */
-    @Bean
+//    @Bean
     public ProducerFactory<String, String> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
@@ -88,7 +88,7 @@ public class KafkaConfig {
     /**
      *  消费者配置信息
      */
-    @Bean
+//    @Bean
     public Map<String, Object> consumerConfigs() {
         Map<String, Object> props = Maps.newHashMap();
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -102,7 +102,7 @@ public class KafkaConfig {
         return props;
     }
 
-	@Bean
+//	@Bean
 	KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>> kafkaListenerContainerFactory() {
 		ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
@@ -114,7 +114,7 @@ public class KafkaConfig {
 	/**
 	 *  消费者批量工厂
 	 */
-	@Bean
+//	@Bean
 	public KafkaListenerContainerFactory<?> batchFactory() {
 		ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
@@ -125,7 +125,7 @@ public class KafkaConfig {
 	/**
 	 *  消费者工厂
 	 */
-	@Bean
+//	@Bean
 	public ConsumerFactory<Integer, String> consumerFactory() {
 		return new DefaultKafkaConsumerFactory<>(consumerConfigs());
 	}
