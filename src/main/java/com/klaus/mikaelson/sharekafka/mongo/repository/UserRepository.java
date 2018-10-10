@@ -16,6 +16,6 @@ import com.klaus.mikaelson.sharekafka.model.mongo.User;
 * @author: klauszhou@wezhuiyi.com
 * @version: 2018年10月9日 下午3:57:19
 */
-public interface UserRepository extends MongoRepository<User, Long>{
+public interface UserRepository extends MongoRepository<User, String>{
 
 }
