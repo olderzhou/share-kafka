@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<include
-		resource="org/springframework/boot/logging/logback/defaults.xml" />
-	<include
-		resource="org/springframework/boot/logging/logback/console-appender.xml" />
-
 	<property name="APP_NAME" value="share-kafka" />
 	<property name="LOG_PATH" value="/data/logs" />
 	<property name="LOG_FILE" value="${APP_NAME}" />
 
 	<contextName>${APP_NAME}</contextName>
 
+
+    <!-- 彩色日志 -->
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
 
 	<!-- 控制台输出格式 -->
 	<property name="CONSOLE_LOG_PATTERN"
@@ -30,7 +31,6 @@
 
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${LOG_FILE}.log</file>
 		<encoder>
 			<pattern>${FILE_LOG_PATTERN}</pattern>
 		</encoder>
@@ -41,8 +41,12 @@
 		</rollingPolicy>
 	</appender>
 
-	<root level="INFO">
-		<appender-ref ref="CONSOLE"/>
-		<appender-ref ref="FILE" />
-	</root>
+	<springProfile name="dev">
+		<logger name="org.springframework.data" level="debug" />
+	
+		<root level="INFO">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="FILE" />
+		</root>
+	</springProfile>
 </configuration>
