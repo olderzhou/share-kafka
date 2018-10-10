@@ -23,6 +23,6 @@ import lombok.EqualsAndHashCode;
 public class UserReq extends BaseReq {
 
 	private String username;
-	private String age;
+	private int age;
 
 }

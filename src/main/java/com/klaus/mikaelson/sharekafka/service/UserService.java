@@ -15,13 +15,18 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.BulkOperations.BulkMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.klaus.mikaelson.sharekafka.base.R;
 import com.klaus.mikaelson.sharekafka.constants.BizConstant;
@@ -70,6 +75,10 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
+	public Iterable<User> saveMany(Iterable<User> users) {
+		return userRepository.saveAll(users);
+	}
+
 	public void delete(User user) {
 		userRepository.delete(user);
 	}
@@ -112,6 +121,32 @@ public class UserService {
 
 	}
 
+	public GeoResults<User> near2(double[] poi) {
+		NearQuery near = NearQuery.near(new Point(poi[0], poi[1])).spherical(false).num(5);
+		GeoResults<User> results = mongoTemplate.geoNear(near, User.class);
+		return results;
+	}
+
+	public GeoResults<User> near3(double[] poi) {
+		NearQuery near = NearQuery.near(new Point(poi[0], poi[1])).spherical(false).distanceMultiplier(111).num(5);
+		GeoResults<User> results = mongoTemplate.geoNear(near, User.class);
+		return results;
+	}
+
+	public GeoResults<User> near4(double[] poi) {
+		NearQuery near = NearQuery.near(new Point(poi[0], poi[1])).spherical(false).maxDistance(5 / 111.0d)
+				.distanceMultiplier(111).num(5);
+		GeoResults<User> results = mongoTemplate.geoNear(near, User.class);
+		return results;
+	}
+
+	public GeoResults<User> nearRadian(double[] poi) {
+		NearQuery near = NearQuery.near(new Point(poi[0], poi[1])).spherical(true).maxDistance(10, Metrics.KILOMETERS) // MILES以及KILOMETERS自动设置spherical(true)
+				.distanceMultiplier(6371).num(1);
+		GeoResults<User> results = mongoTemplate.geoNear(near, User.class);
+		return results;
+	}
+
 	public R findUserList(UserReq userReq) {
 		// 获取所有字段
 		Field[] declaredFields = UserReq.class.getDeclaredFields();
@@ -123,7 +158,7 @@ public class UserService {
 				field.setAccessible(true);// 设置反射可以得到私有字段
 				String name = field.getName();
 				Object object = field.get(userReq);
-				if(object != null) {
+				if (object != null) {
 					if ("username".equals(name)) {
 						// 模糊查询
 						queryBuilder.and(name).regex(Pattern.compile("^.*" + String.valueOf(object) + ".*$"));
@@ -132,22 +167,31 @@ public class UserService {
 					}
 				}
 			}
+			// 总记录数
+			long count = mongoTemplate.count(Query.query(queryBuilder),
+					BizConstant.CollectionNameEnum.COLLECTION_USER.getName());
+			List<User> find = null;
+			if (StringUtils.isEmpty(userReq.getSort())) {
+				find = mongoTemplate.find(
+						Query.query(queryBuilder).skip(userReq.getPageIndex() * userReq.getPageSize())
+								.limit(userReq.getPageSize()),
+						User.class, BizConstant.CollectionNameEnum.COLLECTION_USER.getName());
+
+			} else {
+				find = mongoTemplate.find(
+						Query.query(queryBuilder).skip(userReq.getPageIndex() * userReq.getPageSize())
+								.limit(userReq.getPageSize()).with(new Sort(Direction.DESC, userReq.getSort())),
+						User.class, BizConstant.CollectionNameEnum.COLLECTION_USER.getName());
+			}
+
+			UserResq userResq = new UserResq();
+			userResq.setTotal(count);
+			userResq.setUsers(find);
+			return R.ok().put("data", userResq);
 		} catch (Exception e) {
 			log.error("findUserList error : {}", e);
 		}
-		// 总记录数
-		long count = mongoTemplate.count(Query.query(queryBuilder),
-				BizConstant.CollectionNameEnum.COLLECTION_USER.getName());
-
-		List<User> find = mongoTemplate.find(
-				Query.query(queryBuilder).skip(userReq.getPageIndex() * userReq.getPageSize())
-						.limit(userReq.getPageSize()).with(new Sort(Direction.DESC, userReq.getSort())),
-				User.class, BizConstant.CollectionNameEnum.COLLECTION_USER.getName());
-
-		UserResq userResq = new UserResq();
-		userResq.setTotal(count);
-		userResq.setUsers(find);
-		return R.ok().put("data", userResq);
+		return R.error(-1, "findUserList error");
 	}
 
 }
