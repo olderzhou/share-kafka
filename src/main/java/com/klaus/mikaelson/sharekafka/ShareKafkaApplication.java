@@ -2,7 +2,10 @@ package com.klaus.mikaelson.sharekafka;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableScheduling
 @EnableJpaAuditing
 @EnableJpaRepositories("com.klaus.mikaelson.sharekafka.dao")
+@EnableAutoConfiguration(exclude= {MongoAutoConfiguration.class,MongoDataAutoConfiguration.class})
 @Slf4j
 public class ShareKafkaApplication {
 
@@ -47,7 +51,7 @@ public class ShareKafkaApplication {
 			emp.setDid(i);
 			emp.setEid(key.generateKey().longValue());
 			sender.send("testJson",emp);
-			sender.send("testJson1",emp);
+//			sender.sendAync("testJson1",emp);
 		}
 		log.info("send {} message finished,time use :{} ms",i,System.currentTimeMillis() - start );
 	}

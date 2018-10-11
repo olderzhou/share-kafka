@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import com.klaus.mikaelson.sharekafka.model.Emp;
@@ -67,24 +69,30 @@ public class KafkaReceiver {
 //		log.info("list listen finished");
 //	}
 
-//	@KafkaListener(id = "listMsgAck", topics = "testJson", containerFactory = "batchFactory")
-//	public void listen15(List<Emp> list, Acknowledgment ack) {
-//		for(Emp i:list) {
-//			log.info("listen15 data is :{}",i);
-//		}
-//		ack.acknowledge();
-//		log.info("list listen finished");
-//	}
+	@KafkaListener(id = "listMsgAck", topics = "testJson", containerFactory = "batchFactory")
+	public void listen15(List<Emp> list,
+			@Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) List<Integer> keys,
+	        @Header(KafkaHeaders.RECEIVED_PARTITION_ID) List<Integer> partitions,
+	        @Header(KafkaHeaders.RECEIVED_TOPIC) List<String> topics,
+	        @Header(KafkaHeaders.OFFSET) List<Long> offsets, Acknowledgment ack) {
+		log.info("list listen start, keys: {}, partitions: {}, topics: {}, offsets: {}", keys, partitions, topics, offsets);
+		
+		for(Emp i:list) {
+			log.info("listen15 data is :{}",i);
+		}
+		ack.acknowledge();
+		log.info("list listen finished");
+	}
 	
     /**
      * 监听topic3和topic4,单条消费
      */
-    @KafkaListener(topics = {"testJson", "testJson1"})
-    public void listen2(ConsumerRecord<String, Object> record , Acknowledgment ack) {
-        consumer(record);
-		ack.acknowledge();
-		log.info("list listen finished");
-    }
+//    @KafkaListener(topics = {"testJson", "testJson1"})
+//    public void listen2(ConsumerRecord<String, Object> record , Acknowledgment ack) {
+//        consumer(record);
+//		ack.acknowledge();
+//		log.info("list listen finished");
+//    }
 
     /**
      * 单条消费
