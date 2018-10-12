@@ -2,6 +2,11 @@ server:
   servlet:
     context-path: /share-kafka
   port: 8080
+  tomcat:
+    accesslog:
+      enabled: true
+      request-attributes-enabled: true
+      directory: /data/log/access
   
 spring:
   # 缓存配置用redis
