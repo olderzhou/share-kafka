@@ -46,7 +46,7 @@ public class ShareKafkaApplication {
 	}
 	
 
-//	@Scheduled(cron = "0/30 * * * * *")
+	@Scheduled(cron = "0/30 * * * * *")
 //	@Scheduled(cron = "0 0/1 * * * *")
 	public void produceData() {
 		log.info("admin config is :{}", admin.getConfig());

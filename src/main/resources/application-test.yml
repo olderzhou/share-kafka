@@ -128,7 +128,7 @@ sharding:
       ds-default:
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.jdbc.Driver
-        jdbc-url: jdbc:mysql://192.168.0.3:3380/test?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+        jdbc-url: jdbc:mysql://192.168.0.3:3380/ds_default?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
         username: root
         password: 123456
         minimum-idle: 1
