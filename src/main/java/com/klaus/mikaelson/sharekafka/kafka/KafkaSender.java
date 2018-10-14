@@ -37,7 +37,7 @@ public class KafkaSender {
     //发送消息方法
     public void send(String topic, Emp message) {
         message.setEname("klaus elena damon");
-        log.info("+++++++++++++++++++++  message = {}", gson.toJson(message));
+//        log.info("+++++++++++++++++++++  message = {}", gson.toJson(message));
         kafkaTemplate.send(topic, String.valueOf(message.getEid()), message);
     }
     
