@@ -11,9 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.google.gson.Gson;
 import com.klaus.mikaelson.sharekafka.model.Emp;
 import com.klaus.mikaelson.sharekafka.service.EmpService;
 
+import io.shardingsphere.orchestration.config.OrchestrationConfiguration;
+import io.shardingsphere.orchestration.reg.api.RegistryCenterConfiguration;
+import io.shardingsphere.shardingjdbc.orchestration.spring.boot.orchestration.SpringBootOrchestrationConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 
 @RunWith(SpringRunner.class)
@@ -21,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ShareKafkaApplicationTests {
 
-	@Autowired
+//	@Autowired
 	private EmpService empService;
 
 //	@Autowired
@@ -29,8 +33,50 @@ public class ShareKafkaApplicationTests {
 //
 //	@Autowired
 //	private StringRedisTemplate stringRedisTemplate;
+	
+	
+	
+	
+	@Autowired
+	private SpringBootOrchestrationConfigurationProperties orchestrationProperties;
+	
+//	@Autowired
+	OrchestrationConfiguration orchestrationConfig;
+	
+	
+//	@Autowired
+	RegistryCenterConfiguration regCenterConfig;
+	
+	
+	
+	
+	@Test 
+	public void testSpringBootOrchestrationConfigurationProperties() {
+		
+		Gson gson = new Gson();
+		
+		log.info("orchestrationProperties is {}", gson.toJson(orchestrationProperties));
+		
+	}
+	
+	
+//	@Test 
+	public void testOrchestrationConfiguration() {
+		
+		log.info("orchestrationConfig is {}", orchestrationConfig);
+		
+	}
+	
+	
+//	@Test 
+	public void testRegistryCenterConfiguration() {
+		
+		log.info("regCenterConfig is {}", regCenterConfig);
+		
+	}
+	
 
-	@Test
+//	@Test
 	public void testSaveEmp() {
 		for (int i=0;i<10;i++) {
 			Emp entity = new Emp();
@@ -49,7 +95,7 @@ public class ShareKafkaApplicationTests {
 	}
 	
 	
-	@Test
+//	@Test
 	public void testUpdateEmp() {
 		Emp emp = empService.findById(255716899122315264L);
 		emp.setSar(2334234.324f);
