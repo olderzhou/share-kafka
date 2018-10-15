@@ -13,7 +13,7 @@ import com.klaus.mikaelson.sharekafka.model.Emp;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+//@Component
 @Slf4j
 public class KafkaReceiver {
 
@@ -69,7 +69,7 @@ public class KafkaReceiver {
 //		log.info("list listen finished");
 //	}
 
-	@KafkaListener(id = "listMsgAck", topics = "testJson", containerFactory = "batchFactory")
+//	@KafkaListener(id = "listMsgAck", topics = "testJson", containerFactory = "batchFactory")
 	public void listen15(List<Emp> list,
 			@Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) List<Integer> keys,
 	        @Header(KafkaHeaders.RECEIVED_PARTITION_ID) List<Integer> partitions,

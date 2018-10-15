@@ -12,24 +12,24 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.AbstractMessageListenerContainer.AckMode;
 
-@EnableKafka
-@Configuration
+//@EnableKafka
+//@Configuration
 //KafkaAutoConfiguration 查看自动配置
 public class KafkaConfig {
 	
-	@Bean
+//	@Bean
 	public NewTopic topic1() {
 	    return new NewTopic("foo1", 10, (short) 2);
 	}
-	@Bean
+//	@Bean
 	public NewTopic topic2() {
 		return new NewTopic("foo2", 5, (short) 1);
 	}
-	@Bean
+//	@Bean
 	public NewTopic topic3() {
 		return new NewTopic("foo3", 3, (short) 1);
 	}
-	@Bean
+//	@Bean
 	public NewTopic topic4() {
 		return new NewTopic("foo4", 2, (short) 1);
 	}
@@ -50,19 +50,19 @@ public class KafkaConfig {
 	/**
 	 * 生产者工厂
 	 */
-	@Autowired
+//	@Autowired
 	private ProducerFactory<String, Object> producerFactory;
 
 	/**
 	 * 消费者工厂
 	 */
-	@Autowired
+//	@Autowired
 	private ConsumerFactory<String, Object> consumerFactory;
 
 	/**
 	 * 生产者模板
 	 */
-	@Bean
+//	@Bean
 	public KafkaTemplate<String, Object> kafkaTemplate() {
 		return new KafkaTemplate<>(producerFactory);
 	}
@@ -70,7 +70,7 @@ public class KafkaConfig {
 	/**
 	 * 消费者批量工厂
 	 */
-	@Bean
+//	@Bean
 	public KafkaListenerContainerFactory<?> batchFactory() {
 		ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory);
