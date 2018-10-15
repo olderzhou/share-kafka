@@ -67,7 +67,7 @@ spring:
             trusted:
               packages: com.klaus.mikaelson.sharekafka.model      
 #  datasource:
-#    url: jdbc:mysql://192.168.0.3:3306/test?characterEncoding=utf-8&useSSL=false
+#    url: jdbc:mysql://127.0.1:3306/test?characterEncoding=utf-8&useSSL=false
 #    username: root
 #    password: 123456
   # jpaconfiguration
@@ -85,42 +85,42 @@ sharding:
       ds-master-0:
         type: com.zaxxer.hikari.HikariDataSource    
         driver-class-name: com.mysql.jdbc.Driver
-        jdbcUrl: jdbc:mysql://192.168.0.3:3306/demo_ds_master_0?useSSL=false
+        jdbcUrl: jdbc:mysql://127.0.1:3306/demo_ds_master_0?useSSL=false
         username: root
         password: 123456
         max-active: 3
       ds-master-0-slave-0:
         type: com.zaxxer.hikari.HikariDataSource    
         driver-class-name: com.mysql.jdbc.Driver
-        jdbcUrl: jdbc:mysql://192.168.0.3:3306/demo_ds_master_0_slave_0?useSSL=false
+        jdbcUrl: jdbc:mysql://127.0.1:3306/demo_ds_master_0_slave_0?useSSL=false
         username: root
         password: 123456
         max-active: 3
       ds-master-0-slave-1:
         type: com.zaxxer.hikari.HikariDataSource    
         driver-class-name: com.mysql.jdbc.Driver
-        jdbcUrl: jdbc:mysql://192.168.0.3:3306/demo_ds_master_0_slave_1?useSSL=false
+        jdbcUrl: jdbc:mysql://127.0.1:3306/demo_ds_master_0_slave_1?useSSL=false
         username: root
         password: 123456
         max-active: 3
       ds-master-1:
         type: com.zaxxer.hikari.HikariDataSource    
         driver-class-name: com.mysql.jdbc.Driver
-        jdbcUrl: jdbc:mysql://192.168.0.3:3306/demo_ds_master_1?useSSL=false
+        jdbcUrl: jdbc:mysql://127.0.1:3306/demo_ds_master_1?useSSL=false
         username: root
         password: 123456
         max-active: 3
       ds-master-1-slave-0:
         type: com.zaxxer.hikari.HikariDataSource    
         driver-class-name: com.mysql.jdbc.Driver
-        jdbcUrl: jdbc:mysql://192.168.0.3:3306/demo_ds_master_1_slave_0?useSSL=false
+        jdbcUrl: jdbc:mysql://127.0.1:3306/demo_ds_master_1_slave_0?useSSL=false
         username: root
         password: 123456
         max-active: 3
       ds-master-1-slave-1:
         type: com.zaxxer.hikari.HikariDataSource    
         driver-class-name: com.mysql.jdbc.Driver
-        jdbcUrl: jdbc:mysql://192.168.0.3:3306/demo_ds_master_1_slave_1?useSSL=false
+        jdbcUrl: jdbc:mysql://127.0.1:3306/demo_ds_master_1_slave_1?useSSL=false
         username: root
         password: 123456
         max-active: 3
@@ -128,7 +128,7 @@ sharding:
       ds-default:
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.jdbc.Driver
-        jdbc-url: jdbc:mysql://192.168.0.3:3306/test?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+        jdbc-url: jdbc:mysql://127.0.1:3306/test?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
         username: root
         password: 123456
         minimum-idle: 1
