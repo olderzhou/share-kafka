@@ -11,12 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.google.gson.Gson;
 import com.klaus.mikaelson.sharekafka.model.Emp;
 import com.klaus.mikaelson.sharekafka.service.EmpService;
 
-import io.shardingsphere.orchestration.config.OrchestrationConfiguration;
+import io.shardingsphere.orchestration.internal.OrchestrationFacade;
+import io.shardingsphere.orchestration.internal.config.ConfigurationService;
+import io.shardingsphere.orchestration.reg.api.RegistryCenter;
 import io.shardingsphere.orchestration.reg.api.RegistryCenterConfiguration;
+import io.shardingsphere.orchestration.reg.zookeeper.ZookeeperConfiguration;
+import io.shardingsphere.orchestration.reg.zookeeper.ZookeeperRegistryCenter;
+import io.shardingsphere.shardingjdbc.orchestration.internal.datasource.OrchestrationMasterSlaveDataSource;
 import io.shardingsphere.shardingjdbc.orchestration.spring.boot.orchestration.SpringBootOrchestrationConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,8 +44,6 @@ public class ShareKafkaApplicationTests {
 	@Autowired
 	private SpringBootOrchestrationConfigurationProperties orchestrationProperties;
 	
-//	@Autowired
-	OrchestrationConfiguration orchestrationConfig;
 	
 	
 //	@Autowired
@@ -49,30 +51,47 @@ public class ShareKafkaApplicationTests {
 	
 	
 	
-	
 	@Test 
-	public void testSpringBootOrchestrationConfigurationProperties() {
-		
-		Gson gson = new Gson();
-		
-		log.info("orchestrationProperties is {}", gson.toJson(orchestrationProperties));
-		
-	}
-	
-	
-//	@Test 
-	public void testOrchestrationConfiguration() {
-		
-		log.info("orchestrationConfig is {}", orchestrationConfig);
-		
-	}
-	
-	
-//	@Test 
-	public void testRegistryCenterConfiguration() {
-		
-		log.info("regCenterConfig is {}", regCenterConfig);
-		
+	public void testConfigurationService() {
+		try {
+			log.info("********************\n orchestrationProperties is {}", orchestrationProperties);
+			log.info("********************\n OrchestrationConfiguration is {}", orchestrationProperties.getOrchestrationConfiguration());
+			
+			OrchestrationFacade orchestrationFacade = new OrchestrationFacade(orchestrationProperties.getOrchestrationConfiguration());
+			
+			log.info("********************\n orchestrationFacade is {}", orchestrationFacade);
+			
+			RegistryCenterConfiguration registryCenterConfiguration = orchestrationProperties.getOrchestrationConfiguration().getRegCenterConfig();
+			
+			RegistryCenter regCenter = new ZookeeperRegistryCenter((ZookeeperConfiguration) registryCenterConfiguration);
+			
+			log.info("********************\n regCenter is {}", regCenter);
+			
+			ConfigurationService configService = orchestrationFacade.getConfigService();
+			
+			log.info("********************\n configService is {}", configService);
+			
+			
+			log.info("************************************************************************************************");
+			log.info("DataSourceMap is :{}", configService.loadDataSourceMap() );
+			
+			log.info("MasterSlaveConfigMap is:{}", configService.loadMasterSlaveConfigMap());
+			
+			
+			log.info("MasterSlaveRuleConfiguration is :{}", configService.loadMasterSlaveRuleConfiguration() );
+			
+			log.info("YamlServerConfiguration is :{}", configService.loadYamlServerConfiguration());
+			
+			log.info("MasterSlaveProperties is :{}", configService.loadMasterSlaveProperties());
+			
+			
+			
+			
+			orchestrationFacade.close();
+		} catch (Exception e) {
+			
+			log.error("Exception is {}",e);
+		}
 	}
 	
 

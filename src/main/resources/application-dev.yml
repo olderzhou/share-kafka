@@ -185,7 +185,7 @@ sharding:
       orchestration:
         name: demo_spring_boot_ds_share_kafka
         type: SHARDING
-        overwrite: false
+        overwrite: true
         zookeeper:
           namespace: orchestration-spring-boot-share-kafka
           server-lists: 192.168.0.3:2181
