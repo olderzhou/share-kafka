@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.util.Date;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.klaus.mikaelson.sharekafka.model.Emp;
 import com.klaus.mikaelson.sharekafka.service.EmpService;
 
@@ -20,7 +25,6 @@ import io.shardingsphere.orchestration.reg.api.RegistryCenter;
 import io.shardingsphere.orchestration.reg.api.RegistryCenterConfiguration;
 import io.shardingsphere.orchestration.reg.zookeeper.ZookeeperConfiguration;
 import io.shardingsphere.orchestration.reg.zookeeper.ZookeeperRegistryCenter;
-import io.shardingsphere.shardingjdbc.orchestration.internal.datasource.OrchestrationMasterSlaveDataSource;
 import io.shardingsphere.shardingjdbc.orchestration.spring.boot.orchestration.SpringBootOrchestrationConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,26 +58,30 @@ public class ShareKafkaApplicationTests {
 	@Test 
 	public void testConfigurationService() {
 		try {
-			log.info("********************\n orchestrationProperties is {}", orchestrationProperties);
-			log.info("********************\n OrchestrationConfiguration is {}", orchestrationProperties.getOrchestrationConfiguration());
+			Gson gson = new Gson();
+//			log.info("********************\n orchestrationProperties is {}", orchestrationProperties);
+//			log.info("********************\n OrchestrationConfiguration is {}", orchestrationProperties.getOrchestrationConfiguration());
 			
 			OrchestrationFacade orchestrationFacade = new OrchestrationFacade(orchestrationProperties.getOrchestrationConfiguration());
 			
-			log.info("********************\n orchestrationFacade is {}", orchestrationFacade);
+//			log.info("********************\n orchestrationFacade is {}", orchestrationFacade);
 			
 			RegistryCenterConfiguration registryCenterConfiguration = orchestrationProperties.getOrchestrationConfiguration().getRegCenterConfig();
 			
 			RegistryCenter regCenter = new ZookeeperRegistryCenter((ZookeeperConfiguration) registryCenterConfiguration);
 			
-			log.info("********************\n regCenter is {}", regCenter);
+//			log.info("********************\n regCenter is {}", regCenter);
 			
 			ConfigurationService configService = orchestrationFacade.getConfigService();
 			
-			log.info("********************\n configService is {}", configService);
+//			log.info("********************\n configService is {}", configService);
 			
 			
 			log.info("************************************************************************************************");
-			log.info("DataSourceMap is :{}", configService.loadDataSourceMap() );
+			
+			Map<String, DataSource> dataSources = configService.loadDataSourceMap() ;
+			dataSources.forEach((k, v) -> System.out.println("key:value = " + k + ":" + v));
+			log.info("DataSourceMap is :{}", configService.loadDataSourceMap());
 			
 			log.info("MasterSlaveConfigMap is:{}", configService.loadMasterSlaveConfigMap());
 			
