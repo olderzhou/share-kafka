@@ -15,15 +15,20 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.BulkOperations.BulkMode;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -35,6 +40,7 @@ import com.klaus.mikaelson.sharekafka.mongo.repository.UserRepository;
 import com.klaus.mikaelson.sharekafka.req.UserReq;
 import com.klaus.mikaelson.sharekafka.req.UserResq;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.geojson.Polygon;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,6 +56,9 @@ public class UserService {
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
+
+	@Autowired
+	private MongoOperations mongoOperations;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -145,6 +154,35 @@ public class UserService {
 				.distanceMultiplier(6371).num(1);
 		GeoResults<User> results = mongoTemplate.geoNear(near, User.class);
 		return results;
+	}
+
+	public GeoResults<User> nearOpration1(double[] poi) {
+		Point location = new Point(poi[0], poi[1]);
+		NearQuery query = NearQuery.near(location).maxDistance(new Distance(10, Metrics.MILES));
+		return mongoOperations.geoNear(query, User.class);
+	}
+
+	public List<User> findByPosition(GeoJsonPolygon geoJsonPolygon) {
+		return userRepository.findByPositionWithin(geoJsonPolygon);
+	}
+
+	public List<User> findByPosition(Polygon polygon) {
+		return userRepository.findByPositionWithin(polygon);
+	}
+	public List<User> searchIntroduction(String content) {
+
+		Query query = TextQuery.queryText(new TextCriteria().matchingAny("coffee", "cake")).sortByScore();
+		// search for 'coffee' and not 'cake'
+		TextQuery.queryText(new TextCriteria().matching("coffee").matching("-cake"));
+		TextQuery.queryText(new TextCriteria().matching("coffee").notMatching("cake"));
+		
+		// search for phrase 'coffee cake'
+		TextQuery.queryText(new TextCriteria().matching("\"coffee cake\""));
+//		TextQuery.queryText(new TextCriteria().phrase("coffee cake"));
+		return mongoTemplate.find(query, User.class);
+		
+		
+	
 	}
 
 	public R findUserList(UserReq userReq) {
