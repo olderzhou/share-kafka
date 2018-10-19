@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -14,13 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alibaba.fastjson.JSON;
-import com.google.gson.Gson;
 import com.klaus.mikaelson.sharekafka.model.Emp;
 import com.klaus.mikaelson.sharekafka.service.EmpService;
 
+import io.shardingsphere.api.config.ShardingRuleConfiguration;
 import io.shardingsphere.orchestration.internal.OrchestrationFacade;
-import io.shardingsphere.orchestration.internal.config.ConfigurationService;
+import io.shardingsphere.orchestration.internal.config.ConfigurationNode;
+import io.shardingsphere.orchestration.internal.yaml.converter.DataSourceConverter;
+import io.shardingsphere.orchestration.internal.yaml.converter.ShardingConfigurationConverter;
 import io.shardingsphere.orchestration.reg.api.RegistryCenter;
 import io.shardingsphere.orchestration.reg.api.RegistryCenterConfiguration;
 import io.shardingsphere.orchestration.reg.zookeeper.ZookeeperConfiguration;
@@ -49,56 +51,46 @@ public class ShareKafkaApplicationTests {
 	private SpringBootOrchestrationConfigurationProperties orchestrationProperties;
 	
 	
-	
-//	@Autowired
-	RegistryCenterConfiguration regCenterConfig;
-	
-	
-	
 	@Test 
 	public void testConfigurationService() {
+		OrchestrationFacade orchestrationFacade = null;
+		RegistryCenter regCenter = null;
+		RegistryCenterConfiguration registryCenterConfiguration = null;
 		try {
-			Gson gson = new Gson();
-//			log.info("********************\n orchestrationProperties is {}", orchestrationProperties);
-//			log.info("********************\n OrchestrationConfiguration is {}", orchestrationProperties.getOrchestrationConfiguration());
+			orchestrationFacade = new OrchestrationFacade(orchestrationProperties.getOrchestrationConfiguration());
+			registryCenterConfiguration = orchestrationProperties.getOrchestrationConfiguration().getRegCenterConfig();
+			regCenter = new ZookeeperRegistryCenter((ZookeeperConfiguration) registryCenterConfiguration);
+			ConfigurationNode configNode =  new ConfigurationNode(orchestrationProperties.getName());
 			
-			OrchestrationFacade orchestrationFacade = new OrchestrationFacade(orchestrationProperties.getOrchestrationConfiguration());
+			String dataSource = regCenter.get(configNode.getFullPath(ConfigurationNode.DATA_SOURCE_NODE_PATH));
+			log.info("{} is: {}", configNode.getFullPath(ConfigurationNode.DATA_SOURCE_NODE_PATH), dataSource);
 			
-//			log.info("********************\n orchestrationFacade is {}", orchestrationFacade);
+			String shardingRule = regCenter.get(configNode.getFullPath(ConfigurationNode.SHARDING_RULE_NODE_PATH));
+			log.info("{} is: {}", configNode.getFullPath(ConfigurationNode.SHARDING_RULE_NODE_PATH), shardingRule);
 			
-			RegistryCenterConfiguration registryCenterConfiguration = orchestrationProperties.getOrchestrationConfiguration().getRegCenterConfig();
+			String shardingConfig = regCenter.get(configNode.getFullPath(ConfigurationNode.SHARDING_CONFIG_MAP_NODE_PATH));
+			log.info("{} is: {}", configNode.getFullPath(ConfigurationNode.SHARDING_CONFIG_MAP_NODE_PATH), shardingConfig);
 			
-			RegistryCenter regCenter = new ZookeeperRegistryCenter((ZookeeperConfiguration) registryCenterConfiguration);
+			String shardingProps = regCenter.get(configNode.getFullPath(ConfigurationNode.SHARDING_PROPS_NODE_PATH));
+			log.info("{} is: {}", configNode.getFullPath(ConfigurationNode.SHARDING_PROPS_NODE_PATH), shardingProps);
 			
-//			log.info("********************\n regCenter is {}", regCenter);
+			Map<String, DataSource> dataSourceMap = DataSourceConverter.dataSourceMapFromYaml(dataSource) ;
+			ShardingRuleConfiguration masterSlaveRuleConfig = ShardingConfigurationConverter.shardingRuleConfigFromYaml(shardingRule);
+			Map<String, Object> shardingConfigMaps = ShardingConfigurationConverter.configMapFromYaml(shardingConfig);
+			Properties  shardingProperties =  ShardingConfigurationConverter.propertiesFromYaml(shardingProps);
 			
-			ConfigurationService configService = orchestrationFacade.getConfigService();
+			orchestrationFacade.init(dataSourceMap, masterSlaveRuleConfig, shardingConfigMaps, shardingProperties);
 			
-//			log.info("********************\n configService is {}", configService);
-			
-			
-			log.info("************************************************************************************************");
-			
-			Map<String, DataSource> dataSources = configService.loadDataSourceMap() ;
-			dataSources.forEach((k, v) -> System.out.println("key:value = " + k + ":" + v));
-			log.info("DataSourceMap is :{}", configService.loadDataSourceMap());
-			
-			log.info("MasterSlaveConfigMap is:{}", configService.loadMasterSlaveConfigMap());
-			
-			
-			log.info("MasterSlaveRuleConfiguration is :{}", configService.loadMasterSlaveRuleConfiguration() );
-			
-			log.info("YamlServerConfiguration is :{}", configService.loadYamlServerConfiguration());
-			
-			log.info("MasterSlaveProperties is :{}", configService.loadMasterSlaveProperties());
-			
-			
-			
-			
-			orchestrationFacade.close();
 		} catch (Exception e) {
 			
 			log.error("Exception is {}",e);
+		} finally {
+			try {
+				regCenter.close();
+				orchestrationFacade.close();
+			} catch (Exception e) {
+				log.error("Resource release exception :{}",e);
+			}
 		}
 	}
 	
