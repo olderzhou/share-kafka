@@ -16,8 +16,7 @@ spring:
   redis:
     database: 1
     # Redis服务器地址
-    host: 192.168.1.167
-#    host: 192.168.0.3
+    host: 192.168.0.3
     # Redis服务器连接端口
     port: 6379
     # Redis服务器连接密码（默认为空）
@@ -186,11 +185,10 @@ sharding:
       orchestration:
         name: demo_spring_boot_ds_share_kafka
         type: SHARDING
-        overwrite: true
+        overwrite: false
         zookeeper:
           namespace: orchestration-spring-boot-share-kafka
-          server-lists: 192.168.1.167:2182
-#          server-lists: 192.168.0.3:2181
+          server-lists: 192.168.0.3:2181
     
 swagger:
   enabled: true

@@ -3,7 +3,9 @@ package com.klaus.mikaelson.sharekafka;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -13,7 +15,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.yaml.snakeyaml.Yaml;
 
 import com.klaus.mikaelson.sharekafka.model.Emp;
 import com.klaus.mikaelson.sharekafka.service.EmpService;
@@ -23,6 +27,7 @@ import io.shardingsphere.orchestration.internal.OrchestrationFacade;
 import io.shardingsphere.orchestration.internal.config.ConfigurationNode;
 import io.shardingsphere.orchestration.internal.yaml.converter.DataSourceConverter;
 import io.shardingsphere.orchestration.internal.yaml.converter.ShardingConfigurationConverter;
+import io.shardingsphere.orchestration.internal.yaml.representer.DefaultConfigurationRepresenter;
 import io.shardingsphere.orchestration.reg.api.RegistryCenter;
 import io.shardingsphere.orchestration.reg.api.RegistryCenterConfiguration;
 import io.shardingsphere.orchestration.reg.zookeeper.ZookeeperConfiguration;
@@ -49,6 +54,30 @@ public class ShareKafkaApplicationTests {
 	
 	@Autowired
 	private SpringBootOrchestrationConfigurationProperties orchestrationProperties;
+	
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testReadYaml() {
+		ClassPathResource yaml = new ClassPathResource("application-test.yml");
+		
+//		FileSystemResource yaml = new FileSystemResource("classpath:application-test.yml");
+		
+		Yaml yaml1 = new Yaml(new DefaultConfigurationRepresenter());
+		try {
+			HashMap<String, Object> loadAs = yaml1.loadAs(yaml.getInputStream(), HashMap.class);
+			
+//			loadAs.entrySet().forEach(entry -> log.info("key:value = " + entry.getKey() + ":" + entry.getValue()));
+			Object sharding = loadAs.get("sharding");
+			
+			log.info("sharding is {}",sharding);
+			
+			
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+	}
 	
 	
 	@Test 
