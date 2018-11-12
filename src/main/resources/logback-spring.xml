@@ -2,7 +2,7 @@
 <configuration>
 
 	<property name="APP_NAME" value="share-kafka" />
-	<property name="LOG_PATH" value="/data/logs" />
+	<property name="LOG_PATH" value="/Users/klauszhou/logs" />
 	<property name="LOG_FILE" value="${APP_NAME}" />
 
 	<contextName>${APP_NAME}</contextName>
